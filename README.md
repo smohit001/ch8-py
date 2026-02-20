@@ -33,3 +33,14 @@ Z X C V      A 0 B F
 Use **Pause** to halt execution and **Reset** to reload the active ROM.
 
 The emulator plays a 440 Hz tone while a ROM's sound timer is nonzero. If the system has no available output device, emulation continues without audio.
+
+## Browser version
+
+The browser frontend runs the same emulator core in Pyodide and keeps ROM files in the browser. Build it locally with:
+
+```powershell
+uv run python scripts/build_site.py
+uv run python -m http.server 8000 --directory dist
+```
+
+Open `http://localhost:8000`. A push to `main` builds the site and force-pushes its deploy-only files to `gh-pages`. In the repository's **Settings → Pages**, select **Deploy from a branch**, then choose `gh-pages` and `/ (root)`.
