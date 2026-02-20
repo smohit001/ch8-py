@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import time
+from os import path as os_path
 from pathlib import Path
 
 import dearpygui.dearpygui as dpg
 
+from .audio import Buzzer
 from .core import Chip8, Chip8Error, HEIGHT, WIDTH
 
 
@@ -31,30 +33,34 @@ KEYS = {
 class EmulatorApp:
     def __init__(self, rom: str | Path | None = None) -> None:
         self.chip = Chip8()
-        self.rom_path = Path(rom) if rom else None
+        self.buzzer = Buzzer()
+        self.rom_path = self._path(rom) if rom else None
         self.running = False
         self.cpu_elapsed = 0.0
         self.timer_elapsed = 0.0
 
     def run(self) -> None:
         dpg.create_context()
-        with dpg.texture_registry(show=False):
-            dpg.add_dynamic_texture(WIDTH, HEIGHT, self._pixels(), tag="screen_texture")
-        self._build_ui()
-        dpg.create_viewport(title="CHIP-8", width=1020, height=645, resizable=False)
-        dpg.setup_dearpygui()
-        dpg.show_viewport()
+        try:
+            with dpg.texture_registry(show=False):
+                dpg.add_dynamic_texture(WIDTH, HEIGHT, self._pixels(), tag="screen_texture")
+            self._build_ui()
+            dpg.create_viewport(title="CHIP-8", width=1020, height=645, resizable=False)
+            dpg.setup_dearpygui()
+            dpg.show_viewport()
 
-        if self.rom_path:
-            self._load_rom(self.rom_path)
-        self._update_screen()
-        previous = time.perf_counter()
-        while dpg.is_dearpygui_running():
-            now = time.perf_counter()
-            self._advance(min(now - previous, 0.1))
-            previous = now
-            dpg.render_dearpygui_frame()
-        dpg.destroy_context()
+            if self.rom_path:
+                self._load_rom(self.rom_path)
+            self._update_screen()
+            previous = time.perf_counter()
+            while dpg.is_dearpygui_running():
+                now = time.perf_counter()
+                self._advance(min(now - previous, 0.1))
+                previous = now
+                dpg.render_dearpygui_frame()
+        finally:
+            self.buzzer.close()
+            dpg.destroy_context()
 
     def _build_ui(self) -> None:
         with dpg.file_dialog(
@@ -64,8 +70,12 @@ class EmulatorApp:
             tag="rom_picker",
             width=700,
             height=400,
+            default_path=str(Path.home() / "Downloads"),
         ):
             dpg.add_file_extension(".ch8", color=(90, 220, 130, 255))
+            dpg.add_file_extension(".rom", color=(90, 220, 130, 255))
+            dpg.add_file_extension(".c8", color=(90, 220, 130, 255))
+            dpg.add_file_extension(".chip8", color=(90, 220, 130, 255))
             dpg.add_file_extension(".*")
         with dpg.window(tag="main", label="CHIP-8", no_close=True):
             with dpg.group(horizontal=True):
@@ -84,9 +94,14 @@ class EmulatorApp:
     def _selected_rom(self, _sender: int, app_data: dict, _user_data: object) -> None:
         path = app_data.get("file_path_name")
         if path:
-            self._load_rom(Path(path))
+            self._load_rom(self._path(path))
+
+    @staticmethod
+    def _path(value: str | Path) -> Path:
+        return Path(os_path.expandvars(str(value))).expanduser()
 
     def _load_rom(self, path: Path) -> None:
+        self.buzzer.set_active(False)
         try:
             self.chip.load_rom_file(path)
         except (OSError, Chip8Error) as error:
@@ -104,6 +119,7 @@ class EmulatorApp:
         if not self.rom_path:
             return
         self.running = not self.running
+        self.buzzer.set_active(False)
         dpg.set_item_label("pause_button", "Pause" if self.running else "Resume")
         dpg.set_value("status", f"{'Running' if self.running else 'Paused'}: {self.rom_path.name}")
 
@@ -135,6 +151,7 @@ class EmulatorApp:
             self.running = False
             dpg.set_item_label("pause_button", "Resume")
             dpg.set_value("status", f"Stopped: {error}")
+        self.buzzer.set_active(self.running and self.chip.sound_timer > 0)
         if self.chip.draw_pending:
             self._update_screen()
 

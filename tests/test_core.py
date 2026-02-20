@@ -1,5 +1,6 @@
 import unittest
 
+from chip8.audio import Buzzer
 from chip8.core import Chip8, FONT_START, HEIGHT, WIDTH
 
 
@@ -32,6 +33,26 @@ class Chip8Tests(unittest.TestCase):
         chip.i = 0x300
         chip.step()
         self.assertEqual(list(chip.memory[0x300:0x303]), [2, 3, 1])
+
+    def test_sound_timer_instruction(self) -> None:
+        chip = Chip8()
+        chip.load_rom(bytes((0x60, 0x03, 0xF0, 0x18)))
+        chip.step()
+        chip.step()
+        chip.tick_timers()
+        self.assertEqual(chip.sound_timer, 2)
+
+    def test_buzzer_callback_generates_or_silences_tone(self) -> None:
+        buzzer = Buzzer.__new__(Buzzer)
+        buzzer.active = True
+        buzzer.phase = 0
+        buzzer.wave = (11, -11)
+        output = bytearray(8)
+        buzzer._write(output, 4, None, None)
+        self.assertEqual(list(memoryview(output).cast("h")), [11, -11, 11, -11])
+        buzzer.active = False
+        buzzer._write(output, 4, None, None)
+        self.assertEqual(list(memoryview(output).cast("h")), [0, 0, 0, 0])
 
 
 if __name__ == "__main__":

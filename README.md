@@ -1,6 +1,6 @@
 # CHIP-8 emulator
 
-A compact CHIP-8 emulator with a Dear PyGui display and ROM picker. It targets Python 3.12 and uses `uv` for dependencies.
+A compact CHIP-8 emulator with a Dear PyGui display, ROM picker, and a CHIP-8 buzzer. It targets Python 3.12 and uses `uv` for dependencies.
 
 ## Run
 
@@ -17,7 +17,7 @@ Or start a ROM directly:
 uv run python -m chip8 path\to\game.ch8
 ```
 
-No ROMs are bundled with this project.
+The picker opens in Downloads and recognizes `.ch8`, `.rom`, `.c8`, and `.chip8` files. No ROMs are bundled with this project.
 
 ## Controls
 
@@ -31,3 +31,5 @@ Z X C V      A 0 B F
 ```
 
 Use **Pause** to halt execution and **Reset** to reload the active ROM.
+
+The emulator plays a 440 Hz tone while a ROM's sound timer is nonzero. If the system has no available output device, emulation continues without audio.
