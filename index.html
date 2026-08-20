@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#08130f">
+    <title>CHIP-8</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2025.10.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2025.10.1/core.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">PYODIDE · CHIP-8</p>
+        <h1>Classic games, in your browser.</h1>
+        <p class="intro">Load a locally stored ROM. It never leaves your device.</p>
+      </header>
+
+      <section class="emulator" aria-label="CHIP-8 emulator">
+        <canvas id="screen" width="64" height="32" aria-label="CHIP-8 display"></canvas>
+        <div class="controls">
+          <label class="button primary" for="rom-input">Load ROM</label>
+          <input id="rom-input" type="file" accept=".ch8,.rom,.c8,.chip8,application/octet-stream">
+          <button id="pause" type="button" disabled>Pause</button>
+          <button id="reset" type="button" disabled>Reset</button>
+          <output id="status" aria-live="polite">Starting Python runtime…</output>
+        </div>
+      </section>
+
+      <section class="help">
+        <h2>Controls</h2>
+        <p>Use <kbd>1</kbd>–<kbd>4</kbd>, <kbd>Q</kbd>–<kbd>R</kbd>, <kbd>A</kbd>–<kbd>F</kbd>, and <kbd>Z</kbd>–<kbd>V</kbd> as the CHIP-8 keypad. Sound plays while a ROM uses its sound timer.</p>
+      </section>
+    </main>
+    <script type="py" src="app.py" config="pyscript.toml"></script>
+  </body>
+</html>
