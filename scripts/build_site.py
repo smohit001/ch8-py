@@ -6,7 +6,8 @@ root = Path(__file__).parents[1]
 source = root / "web"
 output = root / "dist"
 output.mkdir(exist_ok=True)
+(output / "app.js").unlink(missing_ok=True)
 
-for name in ("index.html", "app.js", "styles.css"):
+for name in ("index.html", "app.py", "pyscript.toml", "styles.css"):
     copy2(source / name, output / name)
 copy2(root / "chip8" / "core.py", output / "chip8_core.py")

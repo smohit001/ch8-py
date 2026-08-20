@@ -1,0 +1,4 @@
+interpreter = "0.29.0"
+
+[files]
+"./chip8_core.py" = "./chip8_core.py"

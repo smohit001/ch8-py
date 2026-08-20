@@ -36,7 +36,7 @@ The emulator plays a 440 Hz tone while a ROM's sound timer is nonzero. If the sy
 
 ## Browser version
 
-The browser frontend runs the same emulator core in Pyodide and keeps ROM files in the browser. Build it locally with:
+The browser frontend runs the same emulator core in Pyodide via PyScript and keeps ROM files in the browser. Its UI and emulator logic are Python; the only JavaScript involved is PyScript's required external runtime loader. Build it locally with:
 
 ```powershell
 uv run python scripts/build_site.py

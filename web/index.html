@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#08130f">
     <title>CHIP-8</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2025.10.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2025.10.1/core.js"></script>
   </head>
   <body>
     <main>
@@ -16,7 +18,7 @@
       </header>
 
       <section class="emulator" aria-label="CHIP-8 emulator">
-        <canvas id="screen" width="640" height="320" aria-label="CHIP-8 display"></canvas>
+        <canvas id="screen" width="64" height="32" aria-label="CHIP-8 display"></canvas>
         <div class="controls">
           <label class="button primary" for="rom-input">Load ROM</label>
           <input id="rom-input" type="file" accept=".ch8,.rom,.c8,.chip8,application/octet-stream">
@@ -31,7 +33,6 @@
         <p>Use <kbd>1</kbd>–<kbd>4</kbd>, <kbd>Q</kbd>–<kbd>R</kbd>, <kbd>A</kbd>–<kbd>F</kbd>, and <kbd>Z</kbd>–<kbd>V</kbd> as the CHIP-8 keypad. Sound plays while a ROM uses its sound timer.</p>
       </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.5/full/pyodide.js"></script>
-    <script type="module" src="app.js"></script>
+    <script type="py" src="app.py" config="pyscript.toml"></script>
   </body>
 </html>

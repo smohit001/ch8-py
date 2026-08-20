@@ -43,6 +43,7 @@ h2 { font-size: 1rem; color: #6df7a3; }
 canvas {
   display: block;
   width: 100%;
+  aspect-ratio: 2 / 1;
   height: auto;
   image-rendering: pixelated;
   background: #06120c;
